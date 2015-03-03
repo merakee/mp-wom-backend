@@ -24,8 +24,8 @@ class API::V0::RegistrationsController < Devise::RegistrationsController
   #       "user_type_id":2,
   #       "created_at":"2015-02-27T21:39:10.730Z",
   #       "updated_at":"2015-02-27T21:39:10.730Z",
-  #       "avatar":{ "url":"https://wombackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=BHblcuLHC%2B1ym4T35b2GD1iLJhA%3D\u0026Expires=1425073750",
-  #       "thumb":{ "url":"https://wombackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=Lq%2BKftpDoWT2g4ZKETEUEPmis%2BE%3D\u0026Expires=1425073750"}},
+  #       "avatar":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=BHblcuLHC%2B1ym4T35b2GD1iLJhA%3D\u0026Expires=1425073750",
+  #       "thumb":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=Lq%2BKftpDoWT2g4ZKETEUEPmis%2BE%3D\u0026Expires=1425073750"}},
   #       "bio":" ",
   #       "social_tags":[],
   #       "hometown":" "}}

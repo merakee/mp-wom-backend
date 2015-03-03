@@ -12,12 +12,12 @@ module APIConstants
   # CONTENT RELARED
   module CONTENT
     MIN_TEXT_LENGTH =1
-    MAX_TEXT_LENGTH =250
+    MAX_TEXT_LENGTH =600
   end
 
   # SYSTEM WIDE RELATED
     module SYSTEM_CONSTANTS    
-      REDIS_KEY_PREFIX = 'wom:'
+      REDIS_KEY_PREFIX = 'mp-wom:'
     end
 
   # CONTENT SELECTION

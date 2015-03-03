@@ -22,7 +22,7 @@ aws: &aws
   
 development:
   <<: *default
-  database: wom-backend-dev
+  database: mp-wom-backend-dev
   
 
 # development:
@@ -38,7 +38,7 @@ development:
 
 test:
   <<: *default
-  database: wom-backend-test
+  database: mp-wom-backend-test
 
 
 production:

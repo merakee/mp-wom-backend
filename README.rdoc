@@ -1,12 +1,12 @@
 == README
 
-===Project name: Word Of Mouth 
+===Project name: Multi Platfrom Word Of Mouth 
 
 ====Rails Backend: JSON based REST API 
 
-====Project Start Date: 25 Jan 2014
+====Project Start Date: 03 March 2015
 
-====Description: Backend API for Word Of Mouth Project. 
+====Description: Backend API for Multi Platfrom Word Of Mouth Project. 
   * All calls to back end API is via POST unless mentioned otherwise
   * All parameters are passed view json body
   * All calls needs user auth params in the json body as user hash unless mentioned otherwise:

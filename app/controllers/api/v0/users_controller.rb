@@ -16,8 +16,8 @@ class API::V0::UsersController < API::V0::APIController
   #       "id":2,
   #       "user_type_id":2,
   #       "nickname":"user101",
-  #       "avatar":{ "url":"https://wombackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/2/avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=iTIrdKjexUeXkILP432d%2B4rVPPs%3D\u0026Expires=1425075503",
-  #       "thumb":{ "url":"https://wombackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/2/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=umdziFvkPVQXWDqX2/PBRr24MoA%3D\u0026Expires=1425075503"}},
+  #       "avatar":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/2/avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=iTIrdKjexUeXkILP432d%2B4rVPPs%3D\u0026Expires=1425075503",
+  #       "thumb":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/2/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=umdziFvkPVQXWDqX2/PBRr24MoA%3D\u0026Expires=1425075503"}},
   #       "bio":" ",
   #       "social_tags":["twitter:username"],
   #       "hometown":"mytown"}}
@@ -60,8 +60,8 @@ class API::V0::UsersController < API::V0::APIController
   #               "user_type_id":2,
   #               "created_at":"2015-02-20T21:26:46.478Z",
   #               "updated_at":"2015-02-20T23:19:40.181Z",
-  #               "avatar":{ "url":"https://wombackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/82/avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=dCo9iin9CxOrO5G51KoF0%2B8t234%3D\u0026Expires=1425071229",
-  #               "thumb":{ "url":"https://wombackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/82/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=JldttOSc0okqnLJlt4cCj29Tykk%3D\u0026Expires=1425071229"}},
+  #               "avatar":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/82/avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=dCo9iin9CxOrO5G51KoF0%2B8t234%3D\u0026Expires=1425071229",
+  #               "thumb":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/82/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=JldttOSc0okqnLJlt4cCj29Tykk%3D\u0026Expires=1425071229"}},
   #               "bio":"new bio",
   #               "social_tags":["kay1:val1","kay2:val2"],
   #               "hometown":"mytown"  }}
