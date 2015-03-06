@@ -20,8 +20,13 @@ class API::V0::APIController < ApplicationController
   end
 
   def permit_only_signedin_user!
-    is_signedin_user = user_params.has_key?(:user_type_id) && user_params[:user_type_id] && (user_params[:user_type_id] == 2 || user_params[:user_type_id] == "2")  
+    is_signedin_user = user_params.has_key?(:user_type_id) && user_params[:user_type_id] && (user_params[:user_type_id] == 2 || user_params[:user_type_id] == "2")
     render :json=> {:success=>false, :message=> "Not a valid action for this user"}, :status =>   :bad_request unless is_signedin_user
+  end
+
+  def is_admin
+    admin_pass = params.require(:params).permit(:admin_pass)[:admin_pass]
+    (!admin_pass.blank?) && admin_pass.eql?(ENV['ADMIN_PASS'])
   end
 
   def user_params

@@ -3,7 +3,7 @@ def able_to_get_user(path,user,user_id,msg=nil)
     post path, auth_params(user).merge({params:{user_id: user_id}})
     expect_response_to_have(response,sucess=true,status=:ok,msg)
     expect(json["user"]).not_to be_nil     
-    expect(json["user"]).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown")
+    expect(json["user"]).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown","verified","like_count","did_like")
     expect(json["user"]["id"]).to eq(user_id)
 end
 
@@ -44,7 +44,7 @@ shared_examples "update user profile" do
     post updateprofile_path, auth_params(user).merge(params: userm.as_json(only: [:email,:password, :password_confirmation,:nickname,:avatar,:bio,:hometown,:social_tags]))
     expect_response_to_have(response,sucess=true,status=:ok)
     # check that the attributes are the same.
-    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown")
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
     expect(json['user']["bio"]).to eq(userm.bio)
     expect(json['user']["nickname"]).to eq(userm.nickname)
     expect(json['user']["email"]).to eq(userm.email)
@@ -57,7 +57,7 @@ shared_examples "update user profile" do
     post updateprofile_path, auth_params(user).merge(params: userm.as_json(only: [:email]))
     expect_response_to_have(response,sucess=true,status=:ok)
     # check that the attributes are the same.
-    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown")
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
     expect(json['user']["bio"]).to eq(user.bio)
     expect(json['user']["nickname"]).to eq(user.nickname)
     expect(json['user']["email"]).to eq(userm.email)
@@ -70,7 +70,7 @@ shared_examples "update user profile" do
     post updateprofile_path, auth_params(user).merge(params: userm.as_json(only: [:nickname]))
     expect_response_to_have(response,sucess=true,status=:ok)
     # check that the attributes are the same.
-    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown")
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
     expect(json['user']["bio"]).to eq(user.bio)
     expect(json['user']["nickname"]).to eq(userm.nickname)
     expect(json['user']["email"]).to eq(user.email)
@@ -83,7 +83,7 @@ shared_examples "update user profile" do
     post updateprofile_path, auth_params(user).merge(params: userm.as_json(only: [:bio]))
     expect_response_to_have(response,sucess=true,status=:ok)
     # check that the attributes are the same.
-    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown")
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
     expect(json['user']["bio"]).to eq(userm.bio)
     expect(json['user']["nickname"]).to eq(user.nickname)
     expect(json['user']["email"]).to eq(user.email)
@@ -96,7 +96,7 @@ shared_examples "update user profile" do
     post updateprofile_path, auth_params(user).merge(params: userm.as_json(only: [:hometown]))
     expect_response_to_have(response,sucess=true,status=:ok)
     # check that the attributes are the same.
-    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown")
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
     expect(json['user']["bio"]).to eq(user.bio)
     expect(json['user']["nickname"]).to eq(user.nickname)
     expect(json['user']["email"]).to eq(user.email)
@@ -110,7 +110,7 @@ shared_examples "update user profile" do
     post updateprofile_path, auth_params(user).merge(params: userm.as_json(only: [:social_tags]))
     expect_response_to_have(response,sucess=true,status=:ok)
     # check that the attributes are the same.
-    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown")
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
     expect(json['user']["bio"]).to eq(user.bio)
     expect(json['user']["nickname"]).to eq(user.nickname)
     expect(json['user']["email"]).to eq(user.email)
@@ -123,7 +123,7 @@ shared_examples "update user profile" do
     post updateprofile_path, auth_params(user).merge(params: userm.as_json(only: [:nickname,:avatar,:bio,:hometown,:social_tags]))
     expect_response_to_have(response,sucess=true,status=:ok)
     # check that the attributes are the same.
-    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown")
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
     expect(json['user']["bio"]).to eq(userm.bio)
     expect(json['user']["nickname"]).to eq(userm.nickname)
     expect(json['user']["email"]).to eq(user.email)
@@ -136,7 +136,7 @@ shared_examples "update user profile" do
     post updateprofile_path, auth_params(user).merge(params: userm.as_json(only: [:email,:password, :password_confirmation]))
     expect_response_to_have(response,sucess=true,status=:ok)
     # check that the attributes are the same.
-    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown")
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
     expect(json['user']["bio"]).to eq(user.bio)
     expect(json['user']["nickname"]).to eq(user.nickname)
     expect(json['user']["email"]).to eq(userm.email)
@@ -201,7 +201,96 @@ shared_examples "update user profile" do
     expect(json['user']['photo_token']['thumb']['url']).not_to be nil 
     expect(json['user']['photo_token']['thumb']['url']).to include("wombackend-dev-freelogue")
   end
+  
+    it 'cannot update like_count' do
+    lcount=rand(100)
+    post updateprofile_path, auth_params(user).merge(params: {like_count:lcount})
+    expect_response_to_have(response,sucess=true,status=:ok)
+    # check that the attributes are the same.
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
+    expect(json['user']["like_count"]).to eq(user.like_count)
+  end
+  
+  it 'cannot update verified' do
+    verified=rand(2)>0
+    post updateprofile_path, auth_params(user).merge(params: {verified:verified})
+    expect_response_to_have(response,sucess=true,status=:ok)
+    # check that the attributes are the same.
+    expect(json['user']).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown", "verified","like_count")
+    expect(json['user']["verified"]).to eq(user.verified)
+  end
 end
+
+shared_examples "user varification access" do          
+  it 'can verify user profile' do
+    ENV['ADMIN_PASS']="admin_pass"
+    #dputs ENV['ADMIN_PASS']
+    userm = create(:user)
+    #verified = rand(2)>0
+    params= {params: {user_id: userm.id, admin_pass:"admin_pass",verified:true}}
+    post verifyuser_path, auth_params(user).merge(params)
+    expect_response_to_have(response,sucess=true,status=:ok)
+    # check that the attributes are the same.
+    expect(json["user"]).not_to be_nil     
+    expect(json["user"]).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown","verified","like_count")
+    expect(json["user"]["verified"]).to be_truthy
+  end
+
+  it 'can unverify user profile ' do
+    userm = create(:user)
+    userm.verified = true
+    params= {params: {user_id: userm.id, admin_pass:"admin_pass",verified:false}}
+    post verifyuser_path, auth_params(user).merge(params)
+    expect_response_to_have(response,sucess=true,status=:ok)
+    # check that the attributes are the same.
+    expect(json["user"]).not_to be_nil     
+    expect(json["user"]).to include("id","user_type_id","nickname","avatar","bio","social_tags","hometown","verified","like_count")
+    expect(json["user"]["verified"]).to be_falsy
+  end
+  
+  it 'cannot verify user without admin pass' do
+    userm = create(:user)
+    params= {params: {user_id: userm.id,verified:true}}
+    post verifyuser_path, auth_params(user).merge(params)
+    expect_response_to_have(response,sucess=false,status=:unauthorized)
+  end
+  
+  it 'cannot verify user with empty admin pass' do
+    userm = create(:user)
+    #verified = rand(2)>0
+    params= {params: {user_id: userm.id, admin_pass:"",verified:true}}
+    post verifyuser_path, auth_params(user).merge(params)
+    expect_response_to_have(response,sucess=false,status=:unauthorized)
+  end
+
+  it 'cannot verify user with nil admin pass' do
+    userm = create(:user)
+    #verified = rand(2)>0
+    params= {params: {user_id: userm.id, admin_pass:nil,verified:true}}
+    post verifyuser_path, auth_params(user).merge(params)
+    expect_response_to_have(response,sucess=false,status=:unauthorized)
+  end
+
+  it 'cannot verify user with nil ENV admin pass' do
+    ENV['ADMIN_PASS']=nil
+    userm = create(:user)
+    #verified = rand(2)>0
+    params= {params: {user_id: userm.id, admin_pass:nil,verified:true}}
+    post verifyuser_path, auth_params(user).merge(params)
+    expect_response_to_have(response,sucess=false,status=:unauthorized)
+  end
+  
+  it 'cannot verify user with empty ENV admin pass' do
+    ENV['ADMIN_PASS']=""
+    userm = create(:user)
+    #verified = rand(2)>0
+    params= {params: {user_id: userm.id, admin_pass:"",verified:true}}
+    post verifyuser_path, auth_params(user).merge(params)
+    expect_response_to_have(response,sucess=false,status=:unauthorized)
+  end
+  
+end
+
 
 shared_examples "cannot get user profile" do
   it 'cannot get user profile' do
@@ -212,6 +301,7 @@ end
 describe "API User Profile" do  
   let(:getprofile_path) {"/api/v0/users/profile"}
   let(:updateprofile_path){"/api/v0/users/update"}
+  let(:verifyuser_path){"/api/v0/users/verify"}
 
     
   describe "user: normal " do  
@@ -219,6 +309,7 @@ describe "API User Profile" do
     let(:userp) {create :user}
     it_behaves_like  "get user profile"
     it_behaves_like  "update user profile"
+    it_behaves_like  "user varification access"
   end
   
   describe "user: anonymous user" do

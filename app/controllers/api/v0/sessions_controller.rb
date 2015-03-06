@@ -31,7 +31,9 @@ class API::V0::SessionsController < Devise::SessionsController
   #                     "thumb":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/82/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=JldttOSc0okqnLJlt4cCj29Tykk%3D\u0026Expires=1425071229"}},
   #                     "bio":" ",
   #                     "social_tags":[],
-  #                     "hometown":" "}}
+  #                     "hometown":" "
+  #                     "verified":false,
+  #                     "like_count":0}}
   # 
     
   def create

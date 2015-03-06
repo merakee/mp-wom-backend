@@ -217,11 +217,13 @@ shared_examples "post content" do
     expect_response_to_have(response,sucess=false,status=:unprocessable_entity)
   end
   
-  it 'cannot post content more than once' do
+  #it 'cannot post content more than once' do
+  it 'can post content more than once' do
     content = build(:content, user_id: nil)
     post create_path, auth_params(user).merge(content.as_json(root: true, only: [:content_category_id, :text]))
     post create_path, auth_params(user).merge(content.as_json(root: true, only: [:content_category_id, :text]))
-    expect_response_to_have(response,sucess=false,status=:unprocessable_entity,"text" => ["User already has this content for the same category"])
+    #expect_response_to_have(response,sucess=false,status=:unprocessable_entity,"text" => ["User already has this content for the same category"])
+    expect_response_to_have(response,sucess=true,status=:created)
   end
   
     it 'can post same content in different category' do

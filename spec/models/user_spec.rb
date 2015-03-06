@@ -27,15 +27,21 @@ describe User do
     it { expect(user).to_not allow_value("base@example").for(:email) }
     it { expect(user).to_not allow_value("blah").for(:email) }
 
-  #it { expect(user).to allow_value(6).for(:user_type_id) }
-  #it { expect(user).to_not allow_value(7).for(:user_type_id) }
-  #it { expect(user).to_not allow_value(0).for(:user_type_id) }
+    #it { expect(user).to allow_value(6).for(:user_type_id) }
+    #it { expect(user).to_not allow_value(7).for(:user_type_id) }
+    #it { expect(user).to_not allow_value(0).for(:user_type_id) }
 
-  # Inclusion/acceptance of values
-  it { expect(user).to ensure_length_of(:nickname).is_at_least(2).is_at_most(17) }
-  it { expect(user).to ensure_length_of(:bio).is_at_least(1).is_at_most(100) }
-  it { expect(user).to ensure_length_of(:hometown).is_at_least(1).is_at_most(40) }
-    
+    # Inclusion/acceptance of values
+    it { expect(user).to ensure_length_of(:nickname).is_at_least(APIConstants::USER::NICKNAME_LENGTH_MIN).is_at_most(APIConstants::USER::NICKNAME_LENGTH_MAX) }
+    it { expect(user).to ensure_length_of(:bio).is_at_least(APIConstants::USER::BIO_LENGTH_MIN).is_at_most(APIConstants::USER::BIO_LENGTH_MAX) }
+    it { expect(user).to ensure_length_of(:hometown).is_at_least(APIConstants::USER::HOMETOWN_LENGTH_MIN).is_at_most(APIConstants::USER::HOMETOWN_LENGTH_MAX) }
+
+    it { should validate_numericality_of(:like_count) }
+    it { should_not allow_value(-1).for(:like_count) }
+    it { should_not allow_value(1.0).for(:like_count) }
+    it { should allow_value(0).for(:like_count) }
+    it { should allow_value(1).for(:like_count) }
+
   #it { expect(tumblog).to ensure_inclusion_of(:status).in_array(['draft', 'public', 'queue']) }
   #it { expect(tng_group).to ensure_inclusion_of(:age).in_range(18..35) }
   #it { expect(band).to ensure_length_of(:bio).is_at_least(25).is_at_most(1000) }
@@ -83,7 +89,9 @@ describe User do
     it { expect(user).to have_db_column(:bio).of_type(:text)}
     it { expect(user).to have_db_column(:social_tags).of_type(:string)}
     it { expect(user).to have_db_column(:hometown).of_type(:string)}
-    
+    it { expect(user).to have_db_column(:verified).of_type(:boolean)}
+    it { expect(user).to have_db_column(:like_count).of_type(:integer)}
+
     # http://rubydoc.info/github/thoughtbot/shoulda-matchers/master/Shoulda/Matchers/ActiveRecord:have_db_index
     it { expect(user).to have_db_index(:email).unique(:true)}
     #it { expect(user).to have_db_index(:userid).unique(:true)}

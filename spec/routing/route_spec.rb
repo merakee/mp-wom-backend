@@ -88,7 +88,33 @@ describe "Routes for" do
       :format =>:json)
     end
 
+    it "verify" do
+      expect(:post =>  "api/v0/users/verify").to route_to(
+      :controller => "api/v0/users",
+      :action => "verify",
+      :format =>:json)
+    end
+    
   end
+
+  describe "User Like Paths: " do
+    specify "create" do
+      expect(:post =>  "api/v0/users/like").to route_to(
+      :controller => "api/v0/user_likes",
+      :action => "create",
+      :format =>:json)
+    end
+
+    it "create via get" do
+      expect(:get => "api/v0/user_likes/create").to route_to(
+      :controller => "application",
+      :action => "routing_error",
+      :format =>:json,
+      :all => "api/v0/user_likes/create")
+    end
+
+  end
+
 
   describe "Content Paths: " do
     specify "index via get" do

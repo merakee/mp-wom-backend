@@ -7,13 +7,15 @@
 ====Project Start Date: 03 March 2015
 
 ====Description: Backend API for Multi Platfrom Word Of Mouth Project. 
+
+ This document decribes the back end API for Multi Platform WoM Project. The back is Josn based: all calls and responses are in Json format. 
+ The following applies to the API as whole.   
+
   * All calls to back end API is via POST unless mentioned otherwise
   * All parameters are passed view json body
   * All calls needs user auth params in the json body as user hash unless mentioned otherwise:
-  {
-    user: {
-  			email: "user_email", 
-  			authentication_token: "auth token" 
-  		}
-  }
+  { user: { email: "user_email", authentication_token: "auth token" }  }
   
+  Methods not documented are for internal use only.
+  
+=====Contact: For questions, bug report contact developer@freelogue.com

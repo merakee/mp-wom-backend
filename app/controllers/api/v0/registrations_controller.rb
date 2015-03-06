@@ -28,8 +28,9 @@ class API::V0::RegistrationsController < Devise::RegistrationsController
   #       "thumb":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=Lq%2BKftpDoWT2g4ZKETEUEPmis%2BE%3D\u0026Expires=1425073750"}},
   #       "bio":" ",
   #       "social_tags":[],
-  #       "hometown":" "}}
-  #
+  #       "hometown":" "
+  #       "verified":false,
+  #       "like_count":0}}
   
   def create
     case  user_type_params

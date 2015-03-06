@@ -31,6 +31,9 @@ Rails.application.routes.draw do
       #resources :users, only: [:show]
       post 'users/profile' => 'users#profile'
       post 'users/update' => 'users#update'
+      post 'users/verify' => 'users#verify'
+      # user_likes
+      post 'users/like' => 'user_likes#create'
             
       # contents 
       #resources :contents, only: [:index,:create]

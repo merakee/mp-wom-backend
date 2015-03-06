@@ -9,29 +9,34 @@ class API::V0::UsersController < API::V0::APIController
   # @response User Profile Object 
   # @response :unprocessable_entity
   # @response :unauthorized
-  # @example_request { "user" :  { "user_type_id" :  2, "email" :  "test_user1@test.com", "authentication_token" :  "oTL6Koq5VESxbr_6K9rJ"}, "params" :  { "user_id" :  2}}
+  # @example_request { "user": { "user_type_id": 2, "email": "test_user1@test.com", "authentication_token": "4vFJdQTWR3TDDG_e7P2-"}, "params": { "user_id": 1}}
   # @example_response 
   #   { "success":true,
   #     "user":{
-  #       "id":2,
-  #       "user_type_id":2,
-  #       "nickname":"user101",
-  #       "avatar":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/2/avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=iTIrdKjexUeXkILP432d%2B4rVPPs%3D\u0026Expires=1425075503",
-  #       "thumb":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/2/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=umdziFvkPVQXWDqX2/PBRr24MoA%3D\u0026Expires=1425075503"}},
-  #       "bio":" ",
-  #       "social_tags":["twitter:username"],
-  #       "hometown":"mytown"}}
+  #             "id":1,
+  #             "user_type_id":2,
+  #             "nickname":"tza3xuxvbj",
+  #             "avatar":{ "url":"https://mpwombackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/1/avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=qk31yYD2tIqqM2Mi3zaUPumJwEg%3D\u0026Expires=1425718186",
+  #                       "thumb":{ "url":"https://mpwombackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/1/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=Kq961E7ZAsQW97yAtKxOwR91Yyk%3D\u0026Expires=1425718186"}},
+  #             "bio":"178dq6kg7ojq35jx4t43szgur2hunvd55dmrzhd3bx5uw9e6lw77yse5bz645wt1q7c3l5wl0i",
+  #             "social_tags":["twitter:2dt6h9tx"],
+  #             "hometown":"txyfif",
+  #             "verified":true,
+  #             "like_count":1,
+  #             "did_like":true}}
       
   def profile
     # get user info 
     user = User.where(id:params_profile[:user_id])[0]
-    if user  
-      render :json => {:success => true, :user => user.as_json(only: [:id,:user_type_id,:nickname,:avatar,:bio,:social_tags,:hometown])}, :status=> :ok
-    else
+    user_json = append_did_like(user)
+    if user_json
+     # render :json => {:success => true, :user => user.as_json(only: [:id,:user_type_id,:nickname,:avatar,:bio,:social_tags,:hometown,:verified,:like_count])}, :status=> :ok
+     render :json => {:success => true, user: user_json}, :status=> :ok
+   else
       render :json => {:success => false, :message => "Invalid user id"}, :status=> :unprocessable_entity
     end
   end
-
+  
   # Update user profile for signed in user
   # @action POST
   # @url /api/v0/users/update
@@ -64,7 +69,9 @@ class API::V0::UsersController < API::V0::APIController
   #               "thumb":{ "url":"https://MpWomBackend-dev-freelogue.s3.amazonaws.com/uploads/user/avatar/82/thumb_avatar.jpg?AWSAccessKeyId=AKIAJ66HRUSQUNFK7PXA\u0026Signature=JldttOSc0okqnLJlt4cCj29Tykk%3D\u0026Expires=1425071229"}},
   #               "bio":"new bio",
   #               "social_tags":["kay1:val1","kay2:val2"],
-  #               "hometown":"mytown"  }}
+  #               "hometown":"mytown"  
+  #               "verified":false,
+  #               "like_count":0}}
   
   def update
     return if invalid_action_for_anonymous_user?(@current_user)
@@ -81,7 +88,21 @@ class API::V0::UsersController < API::V0::APIController
       clean_tempfile
   end
 
-  
+  def verify
+    return if invalid_action_for_anonymous_user?(@current_user) 
+    # check if admin 
+    render :json => {:success => false, :message=> "Unauthorized user"}, :status => :unauthorized and return unless is_admin
+    # update user verification 
+    user=User.where(id:params_verify_user[:user_id])[0]
+    if user.update(verified:params_verify_user[:verified])
+      render :json => {success:  true, :user => user.as_json}, status:  :ok #200
+    else
+      warden.custom_failure!
+      render :json => {success:  false, message:  (user.errors.as_json)}, status:  :unprocessable_entity
+    end
+  end
+
+
   # def destroy
   # authorize! :destroy, @user, :message => 'Not authorized as an administrator.'
   # user = User.find(params[:id])
@@ -99,12 +120,17 @@ class API::V0::UsersController < API::V0::APIController
     params.require(:params).permit(:user_id)
   end
   
+  def params_verify_user
+    params.require(:params).permit(:user_id,:verified)
+  end
+    
   def params_update
     process_avatar_params(params[:user][:avatar]) unless params[:user].nil? 
     params.require(:params).permit(:nickname,:email,:password,:password_confirmation,:avatar,:bio,:social_tags,:hometown)
   end
   
-    def process_avatar_params(avatar)
+  
+  def process_avatar_params(avatar)
     if avatar && avatar[:file]
       @tempfile = Tempfile.new('user_photo')
       @tempfile.binmode
@@ -125,4 +151,10 @@ class API::V0::UsersController < API::V0::APIController
     @tempfile.close!  if @tempfile
   end
 
+  def append_did_like(user)
+    return nil if !user 
+    user_like_hash = {did_like: UserLike.where(user_id:@current_user.id).where(userid_liked:user.id).count>0}
+    user.as_json(only: [:id,:user_type_id,:nickname,:avatar,:bio,:social_tags,:hometown,:verified,:like_count]).merge(user_like_hash)
+  end
+  
 end

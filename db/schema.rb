@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150205214630) do
+ActiveRecord::Schema.define(version: 20150304213035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,13 @@ ActiveRecord::Schema.define(version: 20150205214630) do
   add_index "favorite_contents", ["content_id"], name: "index_favorite_contents_on_content_id", using: :btree
   add_index "favorite_contents", ["user_id"], name: "index_favorite_contents_on_user_id", using: :btree
 
+  create_table "user_likes", force: true do |t|
+    t.integer "user_id",      limit: 8, null: false
+    t.integer "userid_liked", limit: 8, null: false
+  end
+
+  add_index "user_likes", ["user_id", "userid_liked"], name: "index_user_likes_on_user_id_and_userid_liked", using: :btree
+
   create_table "user_ratings", force: true do |t|
     t.integer  "user_id",    limit: 8
     t.integer  "content_id", limit: 8
@@ -124,11 +131,13 @@ ActiveRecord::Schema.define(version: 20150205214630) do
     t.integer  "user_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "nickname",               default: "Anonymous",  null: false
+    t.string   "nickname",               default: "anonim",     null: false
     t.string   "avatar",                 default: "avatar.jpg", null: false
     t.text     "bio",                    default: " ",          null: false
     t.string   "social_tags",            default: [],           null: false, array: true
     t.string   "hometown",               default: " ",          null: false
+    t.boolean  "verified",               default: false,        null: false
+    t.integer  "like_count",             default: 0,            null: false
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

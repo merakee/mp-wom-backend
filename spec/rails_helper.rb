@@ -63,6 +63,9 @@ RSpec.configure do |config|
   config.include Requests::JsonHelpers, :type => :request
   config.include Requests::ResponseHelpers, :type => :request
   
+  #App util
+  config.include APPUtil
+  
   # declare an exclusion filter
   config.filter_run_excluding :exclude => true
 

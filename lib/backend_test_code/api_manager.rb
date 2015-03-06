@@ -29,11 +29,7 @@ class ApiManager
       puts "Api Manager: Connection to local server with #{@verbose?"verbose":"silent"} mode......"
     elsif (server_flag =="-p")
       @server = "production"
-      puts "Api Manager: Connection to AWS - Production server with #{@verbose?"verbose":"silent"} mode......"
-   elsif (server_flag =="-p2")
-      @server = "production_v2"
-      puts "Api Manager: Connection to AWS - Production server (V2) with #{@verbose?"verbose":"silent"} mode......"
-      
+      puts "Api Manager: Connection to AWS - Production server with #{@verbose?"verbose":"silent"} mode......"      
     else
       @server = "development"
       puts "Api Manager: Connection to AWS Development server with #{@verbose?"verbose":"silent"} mode......"
@@ -43,17 +39,14 @@ class ApiManager
 # path setup
   def base_url
     #aws_path = 'http://wom-backend-master-env-hv2gxttyvi.elasticbeanstalk.com/'
-    path_aws_p = 'http://wom.freelogue.net/'
-    path_aws_p2 = 'http://wom-v2.freelogue.net/'
-    path_aws_d = 'http://wom-dev.freelogue.net/'
+    path_aws_p = 'http://mpwom-pro.freelogue.net/'
+    path_aws_d = 'http://mpwom-dev.freelogue.net/'
     path_local = 'http://localhost:3000/'
     api_path = 'api/v0/'
     if @server.eql? "local"
     path_local + api_path
     elsif @server.eql? "production"
     path_aws_p + api_path
-    elsif @server.eql?"production_v2"
-    path_aws_p2 + api_path
     else
     path_aws_d + api_path
     end
@@ -66,13 +59,10 @@ class ApiManager
 
   def api_version
     #return 1 if ["production", "development"].include?@server
-    return 3 if ["local", "development"].include?@server
-    return 2
+    # return 3 if ["local", "development"].include?@server
+    return 1
   end
   def get_path_for(action)
-    # suppoer
-    return get_path_for_server_v1(action) if api_version==1
-
     case action
     when "signup"
       "signup"
@@ -122,26 +112,11 @@ class ApiManager
       "users/profile"
     when "profile_update"
       "users/update"
-    else
-    puts "***************** ERROR: No such action #{action} on #{@server} server"
-    ""
-    end
-  end
+    when "user_like"
+      "users/like"
+    when "user_verify"
+      "users/verify"
 
-  def get_path_for_server_v1(action)
-    case action
-    when "signup"
-      "sign_up"
-    when "signin"
-      "sign_in"
-    when "signout"
-      "sign_out"
-    when "content_post"
-      "contents"
-    when "content_getlist"
-      "get_contents"
-    when "content_response"
-      "user_responses"
     else
     puts "***************** ERROR: No such action #{action} on #{@server} server"
     ""
@@ -160,7 +135,9 @@ class ApiManager
       response = RestClient.get  path  if verb=='get'
       response = RestClient.delete  path, data.to_json,  :content_type => :json, :accept => :json     if verb=='delete'
 
-puts response 
+      # for api documentation *************
+      puts response if @verbose 
+      
       @@response = JSON::parse(response)
       @@success = true
       @@success = @@response['success'] if @@response['success'].nil?
@@ -470,4 +447,15 @@ puts response
     user.email = @@response['user']['email'] if @@success 
     procesd_response_with_msg('user',"Update Profile failed")
   end
+  
+  def user_verify(user = admin_user,user_id,verified,admin_pass)
+    api_call('post',get_path_for('user_verify'),{:user => user.auth, :params => {user_id: user_id,verified:verified,admin_pass:admin_pass}})
+    procesd_response_with_msg('user',"Verify user failed")
+  end
+  
+  def user_like(user = admin_user,userid_liked)
+    api_call('post',get_path_for('user_like'),{:user => user.auth, :params => {userid_liked: userid_liked}})
+    procesd_response_with_msg('user_like',"Like user failed")
+  end
+  
 end

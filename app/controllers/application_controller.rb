@@ -39,7 +39,10 @@ class ApplicationController < ActionController::API
   def favorite_content_manager
     @favorite_content_manager ||= FavoriteContentManager.new
   end 
-      
+
+  def user_stat_manager
+    @user_stat_manager ||= UserStatManager.new
+  end      
     
   private
 

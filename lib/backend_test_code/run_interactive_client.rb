@@ -18,16 +18,17 @@ require 'highline/import'
 
 class InteractiveClient
   def initialize
-    @user =  nil 
-    #self.action_list
+    @user =  nil
+  #self.action_list
   end
 
   def set_server
-    print "Select server: local (l), development (d - default), or production (p), or production v2 (p2): "
-    #print "Select server: local (l), development (d - default), or production (p): "
+    print "Select server: local (l), development (d - default), or production (p): "
     @server = gets.chomp
-    @server = "d" unless @server.eql?("l") || @server.eql?("p")  || @server.eql?("p2")
-    @api_manager = ApiManager.new("-"+@server)
+    @server = "d" unless @server.eql?("l") || @server.eql?("p")
+    print "Verbose (y/n): "
+    @verbose = gets.chomp.eql?("y")
+    @api_manager = ApiManager.new("-"+@server,@verbose)
     set_and_sign_in_user
     set_action_list
   end
@@ -65,33 +66,6 @@ class InteractiveClient
     @action_list = []
     if @api_manager.api_version==1
       @action_list <<  ActionItem.new("Get content list (default)","content_getlist")
-      @action_list <<  ActionItem.new("Post content","content_post")
-      @action_list <<  ActionItem.new("Response to a content","content_response")
-      @action_list <<  ActionItem.new("***Change User","change_user")
-      @action_list <<  ActionItem.new("***Change Server","change_server")
-      @action_list <<  ActionItem.new("***Exit","exit")
-    elsif @api_manager.api_version==2
-      @action_list <<  ActionItem.new("Get content list (default)","content_getlist")
-      @action_list <<  ActionItem.new("Get content (single)","content_get")
-      @action_list <<  ActionItem.new("Post content","content_post")
-      @action_list <<  ActionItem.new("Response to a content","content_response")
-      @action_list <<  ActionItem.new("Flag content","content_flag")
-      @action_list <<  ActionItem.new("Get comments for content","comment_getlist")
-      @action_list <<  ActionItem.new("Post comment for content","comment_post")
-      @action_list <<  ActionItem.new("Like a comment","comment_response")
-      @action_list <<  ActionItem.new("Get History - content","history_contents")
-      @action_list <<  ActionItem.new("Get History - comment","history_comments")
-      @action_list <<  ActionItem.new("Get Notification - count","notification_count")
-      @action_list <<  ActionItem.new("Get Notification - list","notification_getlist")
-      @action_list <<  ActionItem.new("Reset Notification - content","notification_reset_content")
-      @action_list <<  ActionItem.new("Reset Notification - comment","notification_reset_comment")
-      @action_list <<  ActionItem.new("* Get content Recent list (default)","content_get_recentlist")
-      @action_list <<  ActionItem.new("* Delete content","content_delete")
-      @action_list <<  ActionItem.new("***Change User","change_user")
-      @action_list <<  ActionItem.new("***Change Server","change_server")
-      @action_list <<  ActionItem.new("***Exit","exit")
-    else #if @api_manager.api_version==3
-      @action_list <<  ActionItem.new("Get content list (default)","content_getlist")
       @action_list <<  ActionItem.new("Get content (single)","content_get")
       @action_list <<  ActionItem.new("Post content","content_post")
       @action_list <<  ActionItem.new("Response to a content","content_response")
@@ -110,6 +84,8 @@ class InteractiveClient
       @action_list <<  ActionItem.new("Reset Notification - comment","notification_reset_comment")
       @action_list <<  ActionItem.new("Get user profile","profile_get")
       @action_list <<  ActionItem.new("Update user profile","profile_update")
+      @action_list <<  ActionItem.new("Like user","user_like")
+      @action_list <<  ActionItem.new("Verify user","user_verify")
       @action_list <<  ActionItem.new("* Get content Recent list (default)","content_get_recentlist")
       @action_list <<  ActionItem.new("* Delete content","content_delete")
       @action_list <<  ActionItem.new("***Change User","change_user")
@@ -134,7 +110,7 @@ class InteractiveClient
   end
 
   def take_action
-   case @action.actionKey
+    case @action.actionKey
     when "content_getlist"
       content_getlist
     when "content_get"
@@ -177,6 +153,10 @@ class InteractiveClient
       profile_get
     when "profile_update"
       profile_update
+    when "user_like"
+      user_like
+    when "user_verify"
+      user_verify
     when "change_user"
       set_user
     when "change_server"
@@ -186,7 +166,7 @@ class InteractiveClient
       exit
     else
     content_getlist
-   end
+    end
   end
 
   #=============== Get inputs
@@ -199,7 +179,7 @@ class InteractiveClient
     print "Enter user_id: "
     gets.chomp.to_i
   end
-  
+
   def get_comment_id
     print "Enter comment_id: "
     gets.chomp.to_i
@@ -238,33 +218,43 @@ class InteractiveClient
     gets.chomp.to_i
   end
 
+  def get_admin_pass
+    print "Enter  admin pass: "
+    gets.chomp
+  end
+
+  def get_user_verify
+    print "Verify user (y/n): "
+    gets.chomp.eql?("y")
+  end
+
   def get_profile_params
     params = {}
     print "Change Nickname: "
     nickname = gets.chomp
-    params[:nickname]=nickname unless nickname.empty?  
-    
+    params[:nickname]=nickname unless nickname.empty?
+
     print "Change bio: "
     bio = gets.chomp
-    params[:bio]=bio unless bio.empty?  
-    
+    params[:bio]=bio unless bio.empty?
+
     print "Change Hometown: "
     hometown = gets.chomp
-    params[:hometown]=hometown unless hometown.empty?  
-    
+    params[:hometown]=hometown unless hometown.empty?
+
     print "Change email: "
     email = gets.chomp
-    params[:email]=email unless email.empty?  
-    
+    params[:email]=email unless email.empty?
+
     print "Change password: "
     password = gets.chomp
-    unless password.empty? 
+    unless password.empty?
       print "password confirmation: "
       password_confirmation = gets.chomp
       params[:password_confirmation]=password_confirmation
-      params[:password]=password  
+      params[:password]=password
     end
-    params    
+    params
   end
 
   #=============== Content
@@ -280,7 +270,7 @@ class InteractiveClient
     image = gets.chomp
 
     content = @api_manager.create_content_with_image(text,image)
-    return if content.nil? 
+    return if content.nil?
     #puts content[:text]
     #puts content[:photo_token][:filename]     if content[:photo_token]
     # puts content[:photo_token][:file]     if content[:photo_token]
@@ -293,7 +283,7 @@ class InteractiveClient
     puts @action.displayText + "...."
     puts @api_manager.get_content_recentlist(@user,count,offset)
   end
-  
+
   def content_get
     content_id  = get_content_id
     puts @action.displayText + "...."
@@ -307,7 +297,7 @@ class InteractiveClient
     puts @action.displayText + "...."
     puts @api_manager.post_response(@user,content_id,response)
   end
-     
+
   def content_flag
     content_id  = get_content_id
     puts @action.displayText + "...."
@@ -320,7 +310,7 @@ class InteractiveClient
     puts @action.displayText + "...."
     puts @api_manager.delete_content(@user,content_id,admin_pass)
   end
-  
+
   #=============== Comment
   def comment_getlist
     content_id  = get_content_id
@@ -383,29 +373,29 @@ class InteractiveClient
     puts @action.displayText + "...."
     puts @api_manager.reset_notification_comment(@user,comment_id,count)
   end
-  
+
   #=============== Favorite Content
-    
+
   def favorite_content
     content_id  = get_content_id
     puts @action.displayText + "...."
     puts @api_manager.favorite_content(@user,content_id)
   end
-  
+
   def unfavorite_content
     content_id  = get_content_id
     puts @action.displayText + "...."
     puts @api_manager.unfavorite_content(@user,content_id)
   end
-  
+
   def favorite_content_getlist
     user_id  = get_user_id
     puts @action.displayText + "...."
     puts @api_manager.favorite_content_getlist(@user,user_id)
   end
-  
+
   #=============== User profile
-    
+
   def profile_get
     user_id  = get_user_id
     puts @action.displayText + "...."
@@ -417,6 +407,22 @@ class InteractiveClient
     puts @action.displayText + "...."
     puts @api_manager.profile_update(@user,params)
   end
+
+  def user_verify
+    user_id  = get_user_id
+    verified =get_user_verify
+    admin_pass = get_admin_pass
+
+    puts @action.displayText + "...."
+    puts @api_manager.user_verify(@user,user_id,verified,admin_pass)
+  end
+
+  def user_like
+    userid_liked  = get_user_id
+    puts @action.displayText + "...."
+    puts @api_manager.user_like(@user,userid_liked)
+  end
+
 end
 
 # run interaction client

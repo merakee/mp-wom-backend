@@ -144,11 +144,6 @@ class API::V0::ContentsController < API::V0::APIController
   def delete_content_params
       params.require(:params).permit(:content_id) 
   end
-    
-  def is_admin
-    admin_pass = params.require(:params).permit(:admin_pass)[:admin_pass]
-    (!admin_pass.blank?) && admin_pass.eql?(ENV['ADMIN_PASS']) 
-  end
   
   def process_photo_token_params(photo_token)
     if photo_token && photo_token[:file]
