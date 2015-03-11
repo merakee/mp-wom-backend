@@ -37,12 +37,13 @@ class InteractiveClient
     print "Enter User email: "
     email = gets.chomp
     password = ask("Enter password: ") { |q| q.echo = "*" }
+    avatar = get_image_file("Avatar")
     user_type = (email.empty?&&password.empty?)?1:2
     @user = ApiManager::User.new(email,password,user_type)
-    set_and_sign_in_user
+    set_and_sign_in_user(avatar)
   end
 
-  def set_and_sign_in_user
+  def set_and_sign_in_user(avatar=nil)
     if(!@user)
       # get user
       email = "test_user1@test.com"
@@ -51,7 +52,7 @@ class InteractiveClient
     end
 
     # sign up/sign_in user
-    @api_manager.sign_up_user(@user)
+    puts @api_manager.sign_up_user(@user,avatar)
   #puts @user.to_json
   end
 
@@ -228,6 +229,20 @@ class InteractiveClient
     gets.chomp.eql?("y")
   end
 
+  def get_image_file(tag="")
+    print "Enter #{tag} image file name, if any (press d for /Users/bijit/Desktop/image.jpg): "
+    imagefile = gets.chomp
+    imagefile = "/Users/bijit/Desktop/image.jpg" if imagefile.eql?("d")
+    imagefile 
+  end
+
+  def get_text_string(tag="")
+    print "Enter #{tag} text (just enter for a random text string): "
+    text = gets.chomp
+    text = Faker::Lorem.sentence if text.empty?
+    text 
+  end
+  
   def get_profile_params
     params = {}
     print "Change Nickname: "
@@ -242,6 +257,9 @@ class InteractiveClient
     hometown = gets.chomp
     params[:hometown]=hometown unless hometown.empty?
 
+    avatar = get_image_file("Avatar")    
+    params[:avatar]=@api_manager.get_hash_for_image(avatar) unless avatar.nil? || avatar.empty?
+    
     print "Change email: "
     email = gets.chomp
     params[:email]=email unless email.empty?
@@ -264,10 +282,8 @@ class InteractiveClient
   end
 
   def content_post
-    print "Enter text: "
-    text = gets.chomp
-    print "Enter image file name, if any: "
-    image = gets.chomp
+    text = get_text_string("Content")
+    image = get_image_file("Content")
 
     content = @api_manager.create_content_with_image(text,image)
     return if content.nil?

@@ -27,7 +27,7 @@ module APIConstants
 
   # SYSTEM WIDE RELATED
   module SYSTEM_CONSTANTS
-    REDIS_KEY_PREFIX = 'mp-wom:'
+    REDIS_KEY_PREFIX = 'mp-wom-redis'
   end
 
   # CONTENT SELECTION

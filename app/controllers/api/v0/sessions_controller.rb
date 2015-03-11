@@ -12,7 +12,7 @@ class API::V0::SessionsController < Devise::SessionsController
   # Sign in user 
   # @action POST
   # @url /api/v0/signin
-  # @discussion Permitted action for all users 
+  # @discussion Permitted action for all users. However, since Anonymous user does not have access to password, this call is useless for anonymous user.   
   # @required body  
   # @response User Object 
   # @response :unprocessable_entity
@@ -60,7 +60,7 @@ class API::V0::SessionsController < Devise::SessionsController
   # @response Success message 
   # @response :unprocessable_entity
   # @response :unauthorized
-  # @example_request { "user": { "user_type_id": 2, "email": "test_user1@test.com", "password": "password"}}
+  # @example_request { "user": { "user_type_id": 2, "email": "test_user1@test.com", "authentication_token": "oTL6Koq5VESxbr_6K9rJ"}}
   # @example_response { "success" : true, "message" :  "Authetication token deleted" }
   
   def destroy

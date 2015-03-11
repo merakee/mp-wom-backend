@@ -4,7 +4,7 @@ class API::V0::UsersController < API::V0::APIController
   # Get user profile for given user id
   # @action POST
   # @url /api/v0/users/profile
-  # @discussion Permitted action for only signed in user (non anonymous)
+  # @discussion Permitted action for all users.
   # @required body  
   # @response User Profile Object 
   # @response :unprocessable_entity
@@ -125,7 +125,7 @@ class API::V0::UsersController < API::V0::APIController
   end
     
   def params_update
-    process_avatar_params(params[:user][:avatar]) unless params[:user].nil? 
+    process_avatar_params(params[:params][:avatar]) unless params[:params].nil? 
     params.require(:params).permit(:nickname,:email,:password,:password_confirmation,:avatar,:bio,:social_tags,:hometown)
   end
   
@@ -137,7 +137,7 @@ class API::V0::UsersController < API::V0::APIController
       @tempfile.write Base64.decode64(avatar[:file])
       @tempfile.rewind
 
-      params[:content][:avatar] = ActionDispatch::Http::UploadedFile.new(
+      params[:params][:avatar] = ActionDispatch::Http::UploadedFile.new(
       :tempfile => @tempfile,
       :content_type => avatar[:content_type],
       :filename => avatar[:filename])
@@ -147,7 +147,7 @@ class API::V0::UsersController < API::V0::APIController
 
   def clean_tempfile
     # clean up tempfile user for params processing
-    # close! closes and deletes (unlicks) the file
+    # close! closes and deletes (unlinks) the file
     @tempfile.close!  if @tempfile
   end
 

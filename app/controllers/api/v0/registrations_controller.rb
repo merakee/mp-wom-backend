@@ -7,6 +7,15 @@ class API::V0::RegistrationsController < Devise::RegistrationsController
   # @action POST
   # @url /api/v0/signup
   # @discussion Permitted action for all users. 
+  #  * Anonymous user must be signed up by the client without user input. 
+  #    With successful sign up, system will assign email and authentication token and client must store them for later use.
+  #    Since Anonymous user cannot sign in or sign out, the same email and authentication token must be used for all 
+  #    future API calls for the same device. In case, for some reason the authentication token fails, client must sign up another 
+  #    anonymous user for the same device and store that information. Each anonymous users are tied to a single device.
+  #  * Normal user authentication token must be stored by the client until the user signs out. For normal user, the authentication token is refreshed 
+  #    once user signs out.
+  #    Since same user can sign in from multiple devices, in the event the user signs out from one device, the authentication token 
+  #    stored in other devices will be invalid. In that case,  client must prompt user to sign up again. 
   # @required body  
   # @response User Object 
   # @response :unprocessable_entity
@@ -102,7 +111,7 @@ class API::V0::RegistrationsController < Devise::RegistrationsController
       @tempfile.write Base64.decode64(avatar[:file])
       @tempfile.rewind
 
-      params[:content][:avatar] = ActionDispatch::Http::UploadedFile.new(
+      params[:user][:avatar] = ActionDispatch::Http::UploadedFile.new(
       :tempfile => @tempfile,
       :content_type => avatar[:content_type],
       :filename => avatar[:filename])
@@ -112,7 +121,7 @@ class API::V0::RegistrationsController < Devise::RegistrationsController
 
   def clean_tempfile
     # clean up tempfile user for params processing
-    # close! closes and deletes (unlicks) the file
+    # close! closes and deletes (unlinks) the file
     @tempfile.close!  if @tempfile
   end
 

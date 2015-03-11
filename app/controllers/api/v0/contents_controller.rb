@@ -162,7 +162,7 @@ class API::V0::ContentsController < API::V0::APIController
 
   def clean_tempfile
     # clean up tempfile user for params processing
-    # close! closes and deletes (unlicks) the file
+    # close! closes and deletes (unlinks) the file
     @tempfile.close!  if @tempfile
   end
 
